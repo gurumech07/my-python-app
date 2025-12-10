@@ -64,4 +64,3 @@ def delete_task(task_id: int):
     db.session.commit()
     flash("Task deleted.", "success")
     return redirect(url_for("main.index"))
-

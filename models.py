@@ -13,4 +13,3 @@ class Task(db.Model):
 
     def __repr__(self) -> str:
         return f"<Task {self.id} {self.title!r}>"
-
