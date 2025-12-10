@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="edit-task">
+    <h2>Edit task</h2>
+    <form action="{{ url_for('main.edit_task', task_id=task.id) }}" method="post">
+      <input
+        type="text"
+        name="title"
+        value="{{ task.title }}"
+        required
+      />
+      <textarea
+        name="description"
+        rows="3"
+        placeholder="Description (optional)"
+      >{{ task.description or "" }}</textarea>
+      <button type="submit">Save</button>
+      <a href="{{ url_for('main.index') }}" class="secondary">Cancel</a>
+    </form>
+  </section>
+{% endblock %}
+

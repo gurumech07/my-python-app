@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="add-task">
+    <h2>Add task</h2>
+    <form action="{{ url_for('main.add_task') }}" method="post">
+      <input
+        type="text"
+        name="title"
+        placeholder="Task title"
+        required
+      />
+      <textarea
+        name="description"
+        placeholder="Description (optional)"
+        rows="2"
+      ></textarea>
+      <button type="submit">Add</button>
+    </form>
+  </section>
+
+  <section class="tasks">
+    <h2>Tasks</h2>
+    {% if tasks %}
+      <ul class="task-list">
+        {% for task in tasks %}
+          <li class="task {% if task.completed %}completed{% endif %}">
+            <form
+              action="{{ url_for('main.toggle_task', task_id=task.id) }}"
+              method="post"
+              class="inline"
+            >
+              <button type="submit" class="toggle-btn">
+                {% if task.completed %}✓{% else %}○{% endif %}
+              </button>
+            </form>
+
+            <div class="task-main">
+              <span class="task-title">{{ task.title }}</span>
+              {% if task.description %}
+                <p class="task-desc">{{ task.description }}</p>
+              {% endif %}
+            </div>
+
+            <div class="task-actions">
+              <a href="{{ url_for('main.edit_task', task_id=task.id) }}">Edit</a>
+              <form
+                action="{{ url_for('main.delete_task', task_id=task.id) }}"
+                method="post"
+                class="inline"
+                onsubmit="return confirm('Delete this task?');"
+              >
+                <button type="submit" class="danger">Delete</button>
+              </form>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No tasks yet. Add your first one!</p>
+    {% endif %}
+  </section>
+{% endblock %}
+
