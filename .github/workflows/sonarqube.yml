@@ -4,16 +4,17 @@ on:
     branches: [ main ]
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   sonarqube:
-    name: SonarQube
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2 
+      - uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
-      - name: SonarQube Scan
-        uses: SonarSource/sonarcloud-github-action@790398bd4f5f6e6e6967b6ca0c76b6d9e5a2f1c8 
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
