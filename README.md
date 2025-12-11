@@ -35,7 +35,7 @@ Open http://127.0.0.1:5000 in your browser.
 Docker
 bash
 # Pull from Docker Hub (after CI/CD runs)
-docker pull YOUR_USERNAME/my-todo-app:latest
+docker pull gurumech07/my-todo-app:latest
 
 # Run
 docker run -p 5000:5000 gurumech07/my-todo-app:latest
