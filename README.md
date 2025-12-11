@@ -102,9 +102,6 @@ pip install pytest flake8 python-dotenv[dev]
 # Run tests
 pytest
 
-# Lint
-flake8 .
-
 # Run with debug
 FLASK_ENV=development python app.py
 License
