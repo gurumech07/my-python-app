@@ -17,7 +17,7 @@ SQLite database (no external DB setup required)
 Quick Start
 bash
 # Clone and enter project
-git clone <your-repo-url>
+git clone https://github.com/gurumech07/my-python-app.git
 cd my-python-app
 
 # Create & activate virtual environment
