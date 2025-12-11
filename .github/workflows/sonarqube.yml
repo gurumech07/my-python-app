@@ -1,8 +1,7 @@
 name: SonarCloud Analysis
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -10,11 +9,11 @@ jobs:
     name: SonarQube
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ed38ea70b  # v4.1.4 pinned
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4.1.7 
         with:
           fetch-depth: 0
       - name: SonarQube Scan
-        uses: SonarSource/sonarcloud-github-action@1f1d73eb80a9eb8b8f8407d60d55fd85c33a5a81  # v3.0.0  pinned
+        uses: SonarSource/sonarcloud-github-action@de3d8cf7f5ff9f5eae51098ad006f7376fe3043e  # v3.1.0 
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
