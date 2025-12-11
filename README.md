@@ -38,7 +38,7 @@ bash
 docker pull YOUR_USERNAME/my-todo-app:latest
 
 # Run
-docker run -p 5000:5000 YOUR_USERNAME/my-todo-app:latest
+docker run -p 5000:5000 gurumech07/my-todo-app:latest
 CI/CD Pipeline
 Automated GitHub Actions workflows:
 
@@ -48,7 +48,8 @@ docker-hub.yml	Push to main	Build & push Docker image
 SonarQube	Push/PR	Code quality analysis
 Project Structure
 text
-my-to-do/
+
+my-python-app/
 ├── app.py              # Flask app factory
 ├── config.py           # Configuration
 ├── models.py           # SQLAlchemy Task model
@@ -65,6 +66,7 @@ my-to-do/
 └── static/
     ├── style.css
     └── app.js
+
 Tech Stack
 Backend: Flask 3.0+, SQLAlchemy, SQLite
 
