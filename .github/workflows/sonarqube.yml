@@ -1,4 +1,4 @@
-name: SonarCloud Analysis  # More descriptive name
+name: SonarCloud Analysis
 on:
   push:
     branches:
@@ -8,14 +8,13 @@ on:
 jobs:
   sonarqube:
     name: SonarQube
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ed38ea70b  # v4.1.4 pinned
         with:
           fetch-depth: 0
       - name: SonarQube Scan
-        uses: SonarSource/sonarcloud-github-action@v3
+        uses: SonarSource/sonarcloud-github-action@1f1d73eb80a9eb8b8f8407d60d55fd85c33a5a81  # v3.0.0  pinned
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
