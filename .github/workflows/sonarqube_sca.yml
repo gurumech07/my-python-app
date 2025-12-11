@@ -19,25 +19,25 @@ jobs:
       with:
         fetch-depth: 0
     
-    # Python dependency scan FIRST
+    # Python dependency scan with SAFETY (SARIF support)
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
     
-    - name: Install & audit Python deps
+    - name: Install safety & scan
       run: |
-        pip install pip-audit
-        pip-audit --format sarif --output pip-audit.sarif || true
-        ls -la pip-audit.sarif  # Debug: verify file created
+        pip install safety
+        safety check --output sarif --output-file pip-safety.sarif || true
+        ls -la pip-safety.sarif || echo "No SARIF generated"
     
-    - name: Upload pip-audit SARIF
-      if: hashFiles('pip-audit.sarif') != ''
-      uses: github/codeql-action/upload-sarif@v4  # ✅ v4 (not deprecated)
+    - name: Upload Safety SARIF
+      if: hashFiles('pip-safety.sarif') != ''
+      uses: github/codeql-action/upload-sarif@v4
       with:
-        sarif_file: pip-audit.sarif
+        sarif_file: pip-safety.sarif
     
-    # Filesystem vuln scan (no Docker build needed)
+    # Trivy filesystem scan
     - name: Trivy filesystem scan
       uses: aquasecurity/trivy-action@0.28.0
       with:
@@ -48,11 +48,11 @@ jobs:
     
     - name: Upload Trivy SARIF
       if: hashFiles('trivy-results.sarif') != ''
-      uses: github/codeql-action/upload-sarif@v4  # ✅ v4
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: trivy-results.sarif
     
-    # SonarQube scan LAST
+    # SonarQube scan
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v3
       env:
