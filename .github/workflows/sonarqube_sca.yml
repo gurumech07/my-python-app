@@ -19,37 +19,40 @@ jobs:
       with:
         fetch-depth: 0
     
-    # Python vulnerability scan
+    # Python dependency scan FIRST
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
     
-    - name: Pip audit
+    - name: Install & audit Python deps
       run: |
         pip install pip-audit
         pip-audit --format sarif --output pip-audit.sarif || true
+        ls -la pip-audit.sarif  # Debug: verify file created
     
     - name: Upload pip-audit SARIF
-      uses: github/codeql-action/upload-sarif@v3
+      if: hashFiles('pip-audit.sarif') != ''
+      uses: github/codeql-action/upload-sarif@v4  # ✅ v4 (not deprecated)
       with:
         sarif_file: pip-audit.sarif
     
-    # Docker vuln scan (simpler, working)
-    - name: Docker vuln scan
-      if: hashFiles('Dockerfile') != ''
+    # Filesystem vuln scan (no Docker build needed)
+    - name: Trivy filesystem scan
       uses: aquasecurity/trivy-action@0.28.0
       with:
-        image-ref: 'my-todo-app:scan'
+        scan-type: 'fs'
+        scan-ref: '.'
         format: 'sarif'
         output: 'trivy-results.sarif'
-        scan-type: 'fs'  # Scan filesystem instead
     
-    - name: Build Docker for Trivy
-      if: hashFiles('Dockerfile') != ''
-      run: docker build -t my-todo-app:scan .
+    - name: Upload Trivy SARIF
+      if: hashFiles('trivy-results.sarif') != ''
+      uses: github/codeql-action/upload-sarif@v4  # ✅ v4
+      with:
+        sarif_file: trivy-results.sarif
     
-    # SonarQube scan
+    # SonarQube scan LAST
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v3
       env:
