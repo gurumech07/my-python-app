@@ -1,0 +1,61 @@
+name: SonarCloud Security Analysis
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
+      actions: read
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    # Python vulnerability scan
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Pip audit vulnerabilities
+      run: |
+        pip install pip-audit
+        pip-audit --format sarif --output pip-audit.sarif || true
+    
+    - name: Upload pip-audit to Sonar
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: pip-audit.sarif
+    
+    # Docker SBOM + vuln scan (if Dockerfile exists)
+    - name: Build for security scan
+      if: hashFiles('Dockerfile') != ''
+      run: docker build -t my-todo-app:scan .
+    
+    - name: Generate Docker SBOM
+      if: hashFiles('Dockerfile') != ''
+      uses: anchore/sbom-action@v1
+      with:
+        image: 'my-todo-app:scan'
+        format: spdx-json
+        output-file: sbom.spdx.json
+    
+    # SonarQube with security rules enabled
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v3
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: >
+          -Dsonar.qualitygate.wait=true
+          -Dsonar.security.reportPaths=pip-audit.sarif
+          -Dsonar.python.coverage.reportPaths=coverage.xml
