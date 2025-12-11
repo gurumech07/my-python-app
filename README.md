@@ -18,7 +18,7 @@ Quick Start
 bash
 # Clone and enter project
 git clone <your-repo-url>
-cd my-to-do
+cd my-python-app
 
 # Create & activate virtual environment
 python -m venv venv
