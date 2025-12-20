@@ -114,9 +114,23 @@ jobs:
 
      # 10. Push Image (Only if the Scan is okay) 
       - name: Push image (only if scan OK)
+        id: push-and-sign
         if: success()          # skips if Scout step failed
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
+
+     # 11. Sign PUSHED image with digest
+      - name: Sign pushed image
+        if: success()
+        run: |
+          cosign sign --yes \
+            ${{ steps.push-and-sign.outputs.image }}@${{ steps.push-and-sign.outputs.digest }}
+
+      # 12. Verify signature
+      - name: Verify cosign signature
+        run: |
+          cosign verify \
+            ${{ steps.push-and-sign.outputs.image }}@${{ steps.push-and-sign.outputs.digest }}
