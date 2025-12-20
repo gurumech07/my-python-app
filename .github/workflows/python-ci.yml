@@ -1,10 +1,10 @@
 name: Python CI
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_run:
+    workflows: ["Build and Push to Docker Hub"]
+    types:
+      - completed  # Runs when Docker succeeds
 
 jobs:
   lint-and-test:
