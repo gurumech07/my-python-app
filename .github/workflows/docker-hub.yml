@@ -15,10 +15,16 @@ jobs:
         uses: actions/checkout@v4
 
        # 2. SonarQube SAST (fail early on code issues)
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v3
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v3  
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=${{ secrets.SONAR_ORG_KEY }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+
 
       # 3. CodeQL Analysis (SAST + deps)
       - name: Initialize CodeQL
