@@ -14,6 +14,43 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+       # 2. SonarQube SAST (fail early on code issues)
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Dependency scanning (pip-audit)
+        uses: pypa/gh-action-pip-audit@v1.6.1  # Fixed action
+        with:
+          requirements-files: requirements.txt
+          fail-on: critical  # Fail on critical vulns
+
+      - name: Secret scanning (TruffleHog)
+        uses: trufflesecurity/trufflehog@main  # Fixed action
+        with:
+          path: ./
+          base: HEAD
+          head: HEAD
+          extra_args: --debug --only-verified
+        continue-on-error: true  # Don't block pipeline
+
+      - name: CodeQL analysis (dependencies + code)
+        uses: github/codeql-action/analyze@v3  # Complete analysis
+          
+      # 3. Setup Python + pytest
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'  
+
+      - name: Install dependencies & run pytest
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pytest pytest-cov
+          pytest --cov=. --cov-report=xml
+
       # 2. Build Docker Image
       - name: Build image (no push)
         uses: docker/build-push-action@v6
@@ -44,7 +81,17 @@ jobs:
           command: sbom
           image: ${{ steps.build.outputs.image }}
           output: sbom.json  # Save as JSON file
-          format: cyclonedx  # Or spdx, json, list
+          format: spdx  # Or spdx, json, list
+
+      - name: Sign image with Cosign (OIDC)
+        if: success()
+        uses: sigstore/cosign-installer@v3.1.2  # Fixed version
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+      - name: Sign and push
+        run: |
+          cosign sign --yes \
+            ${{ steps.build.outputs.image }}@${{ steps.build.outputs.digest }}
 
     # 6. Upload SBOM as artifact
       - name: Upload SBOM artifact
