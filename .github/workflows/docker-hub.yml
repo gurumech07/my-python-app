@@ -22,10 +22,10 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Dependency scanning (pip-audit)
-        uses: pypa/gh-action-pip-audit@v1.6.1  # Fixed action
+        uses: pypa/gh-action-pip-audit@v1  # Correct tag
         with:
           requirements-files: requirements.txt
-          fail-on: critical  # Fail on critical vulns
+          fail-on: critical
 
       - name: Secret scanning (TruffleHog)
         uses: trufflesecurity/trufflehog@main  # Fixed action
