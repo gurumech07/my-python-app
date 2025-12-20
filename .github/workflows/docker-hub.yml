@@ -3,39 +3,48 @@ name: Build and Push to Docker Hub
 on:
   push:
     branches: [ main ]
-  # Or only on tags:
-  # push:
-  #   tags:
-  #     - "v*"
+ 
 
 jobs:
-  build-and-push:
+  doker-build-scout-push:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2. Build Docker Image
+      - name: Build image (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
+
+      # 3. Scan locally with Docker Scout and FAIL on critical/high
+      - name: Scan for CVEs with Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
+          only-severities: critical,high   # will cause non‑zero exit if such CVEs exist
+
+      # 4. Login to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push
+     # 5. Push Image (Only if the Scan is okay) 
+      - name: Push image (only if scan OK)
+        if: success()          # skips if Scout step failed
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
 
-      - name: Scan for CVEs with Docker Scout
-        uses: docker/scout-action@v1
-        with:
-          command: cves
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
-          # Optional: Filter to critical/high only
-          # only-severities: critical,high
+      # - name: Set up Docker Buildx
+        # uses: docker/setup-buildx-action@v3
