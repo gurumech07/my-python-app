@@ -31,3 +31,11 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
+
+      - name: Scan for CVEs with Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
+          # Optional: Filter to critical/high only
+          # only-severities: critical,high
