@@ -68,6 +68,8 @@ jobs:
         with:
           context: .
           push: false
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
 
      # 6. Login to Docker Hub
