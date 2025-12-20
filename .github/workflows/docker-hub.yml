@@ -102,7 +102,7 @@ jobs:
       - name: Sign and push
         run: |
           cosign sign --yes \
-             ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest@${{ steps.build.outputs.digest }}
+             ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
 
     # 9. Upload SBOM as artifact
       - name: Upload SBOM artifact
@@ -127,10 +127,10 @@ jobs:
         if: success()
         run: |
           cosign sign --yes \
-            ${{ steps.push-and-sign.outputs.image }}@${{ steps.push-and-sign.outputs.digest }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
 
       # 12. Verify signature
       - name: Verify cosign signature
         run: |
           cosign verify \
-            ${{ steps.push-and-sign.outputs.image }}@${{ steps.push-and-sign.outputs.digest }}
+            $${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
