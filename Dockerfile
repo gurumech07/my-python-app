@@ -12,7 +12,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Production stage - OFFICIAL Docker Hub Python Alpine (hardened)
-FROM python:3.11-alpine3.19-dhi AS prod
+FROM python:3.11-alpine AS prod
 # Pre-scanned by Docker Scout, minimal Alpine base (~50MB), non-root ready
 
 # Copies ONLY app code (excludes .git, tests, docs - reduces attack surface)
