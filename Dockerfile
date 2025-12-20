@@ -1,6 +1,6 @@
 # BUILD STAGE - Installs dependencies only (cached, not in prod image)
 # Use hardened light weight secure image that has up to 95% less vulnerabilities 
-FROM docker.io/docker/dockerfile:1.5 AS builder
+FROM dhi.io/docker/dockerfile:1.5 AS builder
 
 #Sets working directory for build artifacts
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Production stage - OFFICIAL Docker Hub Python Alpine (hardened)
-FROM python:3.11-alpine AS prod
+FROM dhi.io/python:3.11-alpine AS prod
 # Pre-scanned by Docker Scout, minimal Alpine base (~50MB), non-root ready
 
 # Copies ONLY app code (excludes .git, tests, docs - reduces attack surface)
