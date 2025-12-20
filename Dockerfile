@@ -32,4 +32,4 @@ EXPOSE 5000
 ENV FLASK_APP=app.py
 
 # Runs Flask via Python module (more reliable than CMD ["flask", "run"])
-CMD ["/usr/local/bin/python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["/usr/local/bin/python", "-m", "flask", "run", "--host=0.0.0.0"]
