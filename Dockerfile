@@ -22,8 +22,11 @@ COPY app.py /app/
 WORKDIR /app
 
 # SECURITY HARDENING - Production best practices
-USER 65532:65532  # Runs as non-root (no privilege escalation if compromised)
-EXPOSE 5000       # Documents container port (doesn't actually open it)
+# Runs as non-root (no privilege escalation if compromised)
+USER 65532:65532
+
+# Documents container port (doesn't actually open it)
+EXPOSE 5000
 
 # Flask app entrypoint config
 ENV FLASK_APP=app.py
