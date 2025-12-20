@@ -24,7 +24,7 @@ jobs:
           args: >
             -Dsonar.organization=${{ secrets.SONAR_ORG_KEY }}
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-
+            -Dsonar.qualitygate.wait=true
 
       # 3. CodeQL Analysis (SAST + deps)
       - name: Initialize CodeQL
