@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 FROM public.ecr.aws/docker-library/python:3.11-alpine AS prod
 # Pre-scanned by Docker Scout, minimal Alpine base (~50MB), non-root ready
 
-Copies ONLY app code (excludes .git, tests, docs - reduces attack surface)
+# Copies ONLY app code (excludes .git, tests, docs - reduces attack surface)
 COPY app.py /app/
 
 #Sets working directory for build artifacts
