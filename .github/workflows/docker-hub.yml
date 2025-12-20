@@ -44,7 +44,7 @@ jobs:
           command: sbom
           image: ${{ steps.build.outputs.image }}
           output: sbom.json  # Save as JSON file
-          format: cyclonedx-json  # Or spdx-json, syft-json
+          format: cyclonedx  # Or spdx, json, list
 
     # 6. Upload SBOM as artifact
       - name: Upload SBOM artifact
