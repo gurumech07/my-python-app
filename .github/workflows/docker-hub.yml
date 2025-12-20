@@ -8,6 +8,12 @@ on:
 jobs:
   doker-build-scout-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read           # Checkout code
+      security-events: write   # CodeQL + SARIF upload
+      id-token: write          # Cosign OIDC signing
+      actions: read            # Artifact download
+      checks: write            # Check annotations
 
     steps:
       # 1. Checkout code
@@ -30,7 +36,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: python  # Add java, javascript if needed
+          languages: python  
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
