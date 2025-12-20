@@ -133,4 +133,6 @@ jobs:
       - name: Verify cosign signature
         run: |
           cosign verify \
-            $${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/my-todo-app:latest \
+            --cert-identity-regexp "https://github.com/.*"
+
